@@ -10,7 +10,7 @@ class HdInvalido(Exception):
 
 class VideoGame:
 
-    ULTIMO_NUMERO_SERIE = 0
+    __ULTIMO_NUMERO_SERIE = 0
 
     def __init__(self, data_fabricacao=None, marca="", modelo="", hd=100, garantia=2):
         if not data_fabricacao:
@@ -25,6 +25,10 @@ class VideoGame:
         self.__numero_serie = self.get_prox_numero_serie()
         self.jogos_instalados = []
 
+    @classmethod
+    def get_ultimo_num_serie(cls):
+        return cls.__ULTIMO_NUMERO_SERIE
+        
     @property
     def data_fabricacao(self):
         return f"{self.__data_fabricacao.day}/{self.__data_fabricacao.month}/{self.__data_fabricacao.year}"
@@ -74,8 +78,8 @@ class VideoGame:
         self.__hd = hd
 
     def get_prox_numero_serie(self):
-        self.__class__.ULTIMO_NUMERO_SERIE += 1
-        return VideoGame.ULTIMO_NUMERO_SERIE
+        self.__class__.__ULTIMO_NUMERO_SERIE += 1
+        return VideoGame.__ULTIMO_NUMERO_SERIE
     
     def instalar_jogo(self, nome):
         self.__jogos_instalados.append(nome)
