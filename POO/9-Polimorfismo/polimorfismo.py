@@ -1,4 +1,6 @@
-class Pessoa:
+from abc import ABC, abstractmethod
+
+class Pessoa(ABC):
     def __init__(self, nome, endereco, telefone) -> None:
         self.nome = nome
         self.endereco = endereco
@@ -20,11 +22,19 @@ class Pessoa:
     def endereco(self, endereco):
         self.__endereco = endereco
 
+    @property
+    def telefone(self):
+        return self.__telefone
+
+    @telefone.setter
+    def telefone(self, telefone):
+        self.__telefone = telefone
+
 class Fornecedor(Pessoa):
     def __init__(self, nome, endereco, telefone, valorCredito, valorDivida) -> None:
         super().__init__(nome, endereco, telefone)
-        self.__valorCredito = valorCredito
-        self.__valorDivida = valorDivida
+        self.valorCredito = valorCredito
+        self.valorDivida = valorDivida
 
     @property
     def valorCredito(self):
@@ -32,6 +42,7 @@ class Fornecedor(Pessoa):
 
     @valorCredito.setter
     def valorCredito(self, valorCredito):
+        assert type(valorCredito) == int or type(valorCredito) == float, "valorCredito deve ser um número"
         self.__valorCredito = valorCredito
 
     @property
@@ -40,18 +51,19 @@ class Fornecedor(Pessoa):
 
     @valorDivida.setter
     def valorDivida(self, valorDivida):
+        assert type(valorDivida) == int or type(valorDivida) == float, "valorDivida deve ser um número"
         self.__valorDivida = valorDivida
 
     def obterSaldo(self):
-        return self.valorDivida - self.valorCredito
+        return self.valorCredito - self.valorDivida
 
-    
 class Empregado(Pessoa):
-    def __init__(self, nome, endereco, telefone, codigoSetor, salarioBase, imposto) -> None:
-        super().__init__(nome, endereco, telefone, imposto)
-        self.__codigoSetor = codigoSetor
-        self.__salarioBase = salarioBase
-        self.__imposto = imposto
+    def __init__(self, nome, endereco, telefone, codigoSetor, salarioBase, imposto, comissao) -> None:
+        super().__init__(nome, endereco, telefone)
+        self.codigoSetor = codigoSetor
+        self.salarioBase = salarioBase
+        self.imposto = imposto
+        self.comissao = comissao
 
     @property
     def codigoSetor(self):
@@ -59,6 +71,7 @@ class Empregado(Pessoa):
 
     @codigoSetor.setter
     def codigoSetor(self, codigoSetor):
+        assert type(codigoSetor) == int, "codigoSetor deve ser um inteiro"
         self.__codigoSetor = codigoSetor
 
     @property
@@ -67,6 +80,7 @@ class Empregado(Pessoa):
 
     @salarioBase.setter
     def salarioBase(self, salarioBase):
+        assert type(salarioBase) == int or type(salarioBase) == float, "salarioBase deve ser um número"
         self.__salarioBase = salarioBase
 
     @property
@@ -75,47 +89,61 @@ class Empregado(Pessoa):
 
     @imposto.setter
     def imposto(self, imposto):
+        assert type(imposto) == float and imposto >=0 and imposto <= 1, "imposto deve ser um float entre 0 e 1"
         self.__imposto = imposto
+
+    @property
+    def comissao(self):
+        return self.__comissao
+
+    @comissao.setter
+    def comissao(self, comissao):
+        assert type(comissao) == float, "comissao deve ser um float entre 0 e 1"
+        self.__comissao = comissao
     
+    @abstractmethod
     def calcularSalario(self):
-        return self.salarioBase - (self.salarioBase - self.imposto)
+        return self.salarioBase - (self.salarioBase * self.imposto)
 
 class Operario(Empregado):
-    def __init__(self, nome, endereco, telefone, codigoSetor, salarioBase, imposto, valorProducao, comissao) -> None:
-        super().__init__(nome, endereco, telefone, codigoSetor, salarioBase, imposto)
-        self.__valorProducao = valorProducao
-        self.__comissao = comissao
+    def __init__(self, nome, endereco, telefone, codigoSetor, salarioBase, imposto, comissao, valorProducao) -> None:
+        super().__init__(nome, endereco, telefone, codigoSetor, salarioBase, imposto, comissao)
+        self.valorProducao = valorProducao
 
     @property
     def valorProducao(self):
         return self.__valorProducao
 
-    @property.setter
+    @valorProducao.setter
     def valorProducao(self, valorProducao):
         self.__valorProducao = valorProducao
 
-    @property
-    def comissao(self):
-        return self.__comissao
-
-    @property.setter
-    def comissao(self, comissao):
-        self.__comissao = comissao
-    
     def calcularSalario(self):
-        return super().calcularSalario() + self.comissao + self.valorProducao
+        return super().calcularSalario() + (self.comissao * self.valorProducao)
 
 class Vendedor(Empregado):
-    def __init__(self, nome, endereco, telefone, codigoSetor, salarioBase, imposto, comissao) -> None:
+    def __init__(self, nome, endereco, telefone, codigoSetor, salarioBase, imposto, comissao, valorVendas) -> None:
         super().__init__(nome, endereco, telefone, codigoSetor, salarioBase, imposto, comissao)
+        self.valorVendas = valorVendas
 
     @property
-    def comissao(self):
-        return self.__comissao
+    def valorVendas(self):
+        return self.__valorVendas
 
-    @property.setter
-    def comissao(self, comissao):
-        self.__comissao = comissao
+    @valorVendas.setter
+    def valorVendas(self, valorVendas):
+        assert type(valorVendas) == int or type(valorVendas) == float, "valorVendas deve ser um número"
+        self.__valorVendas = valorVendas
         
     def calcularSalario(self):
-        return super().calcularSalario() + self.comissao
+        return super().calcularSalario() + (self.comissao * self.valorVendas)
+
+if __name__ == '__main__':
+    f = Fornecedor("Coca cola", "Los Angeles US", "12012131", 20000, 5000)
+    print("Fornecedor =", f.nome)
+    print("Saldo =", f.obterSaldo())
+
+    o = Operario("Joao", "Rua boa", "998238283", 1, 900.00, 0.2, 0.2, 2000)
+    v = Vendedor("Joao", "Rua boa", "998238283", 1, 1500.00, 0.2, 0.5, 3000.00)
+    for p in [o, v]:
+        print(f"Salário do {p.__class__.__name__} = { p.calcularSalario():.2f}")
