@@ -1,0 +1,28 @@
+from fila import Fila
+from pilha import Pilha
+
+print("PILHA: ")
+pilha = Pilha()
+pilha.push(44)
+pilha.push(65)
+pilha.push(32)
+pilha.push(54)
+pilha.push(100)
+print(pilha.pop().carga)
+print(pilha)
+print("remover até elemento")
+pilha.remover_ate_elemento(32)
+print(pilha)
+
+print("FILA: ")
+fila = Fila()
+fila.add(124)
+fila.add(853)
+fila.add(542)
+fila.add(321)
+print(fila)
+fila.add(6000)
+fila.add(8000)
+print(fila)
+fila.remove()
+print(fila)
