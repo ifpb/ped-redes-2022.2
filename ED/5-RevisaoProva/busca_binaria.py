@@ -3,7 +3,6 @@ from ast import List
 def busca_binaria(chave: str, vetor: List) -> str:
   primeiro: int = 0
   ultimo: int = len(vetor)-1
-  resultado = []
 
   while primeiro <= ultimo:
     meio = (primeiro + ultimo) // 2
@@ -15,7 +14,7 @@ def busca_binaria(chave: str, vetor: List) -> str:
     else:
       primeiro = meio + 1
   
-  return resultado
+  return -1
 
 def busca_binaria_recursiva(chave: str, vetor: List, primeiro=0, ultimo=None) -> str:
     

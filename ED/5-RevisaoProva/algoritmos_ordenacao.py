@@ -1,23 +1,23 @@
 from typing import List
 
-def selection_sort_alg(vetor: List):
+def selection_sort_alg(vetor: List, criterio='ip'):
     for i in range(len(vetor)):
         pos_menor = i
         menor = vetor[i]
         for j in range(i+1, len(vetor)):
-            if vetor[j]['ip'] < menor['ip']:
+            if vetor[j][criterio] < menor[criterio]:
                 menor = vetor[j]
                 pos_menor = j
         vetor[pos_menor] = vetor[i]
         vetor[i] = menor
 
-def busca_binaria_recursiva(vetor: List, chave: str, primeiro=0, ultimo=None) -> int:
+def busca_binaria_recursiva(vetor: List, chave: str, primeiro=0, ultimo=None, criterio='ip') -> int:
     
   if ultimo is None:
     ultimo = len(vetor)-1
 
   if primeiro == ultimo:
-    if vetor[primeiro]['ip'] > chave:
+    if vetor[primeiro][criterio] > chave:
         return primeiro
     else:
         return primeiro + 1
@@ -26,18 +26,18 @@ def busca_binaria_recursiva(vetor: List, chave: str, primeiro=0, ultimo=None) ->
 
   meio = (primeiro + ultimo) // 2 
 
-  if chave < vetor[meio]['ip']:
-    return busca_binaria_recursiva(vetor, chave, primeiro, meio)
-  elif chave > vetor[meio]['ip']:
-    return busca_binaria_recursiva(vetor, chave, meio+1, ultimo)
+  if chave < vetor[meio][criterio]:
+    return busca_binaria_recursiva(vetor, chave, primeiro, meio, criterio)
+  elif chave > vetor[meio][criterio]:
+    return busca_binaria_recursiva(vetor, chave, meio+1, ultimo, criterio)
   else:
     return meio
 
-def insertion_sort_bin(lista: List):
+def insertion_sort_bin(lista: List, criterio='ip'):
     for i in range (1, len(lista)):
         chave = lista[i]
         j = i - 1
-        loc = busca_binaria_recursiva(lista, chave['ip'])
+        loc = busca_binaria_recursiva(lista, chave[criterio], 0, None, criterio)
         
         # Move os elementos maiores que a chave para uma posição
         # a mais do que a atual para abrir espaço
@@ -46,10 +46,10 @@ def insertion_sort_bin(lista: List):
             j -= 1
         lista[j+1] = chave
 
-def merge(esquerda, direita, vetor):
+def merge(esquerda, direita, vetor, criterio='ip'):
     i,j,k = 0,0,0
     while i < len(esquerda) and j < len(direita):
-        if esquerda[i]['ip'] <= direita[j]['ip']:
+        if esquerda[i][criterio] <= direita[j][criterio]:
             vetor[k] = esquerda[i]
             i, k = i+1, k+1
         else:
@@ -65,22 +65,22 @@ def merge(esquerda, direita, vetor):
         j,k = j+1,k+1
 
 
-def mergesort(vetor):
+def mergesort(vetor, criterio='ip'):
     if len(vetor) < 2: return vetor
     meio = len(vetor) // 2
     ## Divisão
     esquerda = vetor[:meio]
     direita = vetor[meio:]
-    mergesort(esquerda)
-    mergesort(direita)
+    mergesort(esquerda, criterio)
+    mergesort(direita, criterio)
     ## Combinação
-    merge(esquerda, direita, vetor)
+    merge(esquerda, direita, vetor, criterio)
 
 
-def quicksort(vetor):
+def quicksort(vetor, criterio):
     if len(vetor) <= 1: return vetor
-    pivo = vetor[0]['ip']
-    iguais = [x for x in vetor if x['ip'] == pivo]
-    menores = [x for x in vetor if x['ip'] < pivo]
-    maiores = [x for x in vetor if x['ip'] > pivo]
-    return quicksort(menores) + iguais + quicksort(maiores)
+    pivo = vetor[0]
+    iguais = [x for x in vetor if x[criterio] == pivo[criterio]]
+    menores = [x for x in vetor if x[criterio] < pivo[criterio]]
+    maiores = [x for x in vetor if x[criterio] > pivo[criterio]]
+    return quicksort(menores, criterio) + iguais + quicksort(maiores, criterio)
